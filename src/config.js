@@ -3,54 +3,77 @@ export const config = {
         colors: {
             background: {
                 from: '#0F172A',
-                to: '#1E293B'
+                to: '#1E293B',
             },
             text: {
                 primary: '#F8FAFC',
                 secondary: '#94A3B8',
-                accent: '#D4AF37'
+                accent: '#D4AF37',
+            },
+            status: {
+                success: '#10B981',
             }
         }
     },
     profile: {
         name: "Dr. Fellipe Barbosa",
         role: "Cirurgião Plástico",
-        bio: "Excelência e naturalidade em cada detalhe. Transformando vidas com arte e ciência.",
-        avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=300&h=300", // Imagem placeholder elegante
-        verified: true
+        crm: "CRM 19704 / RQE 12419",
+        clinic: "QUANTUM/MORPHEUS",
+        description: [
+            "Excelência técnica. Verdade clínica. Cuidado real.",
+            "Resultados são consequência, não promessa.",
+            "Vamos juntos?"
+        ],
+        avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=300&h=300",
+        socials: [
+            { id: 'instagram', icon: 'Instagram', url: 'https://instagram.com/drfellipebarbosa' },
+            { id: 'linkedin', icon: 'Linkedin', url: 'https://linkedin.com/in/drfellipebarbosa' }
+        ]
     },
-    links: [
+    items: [
         {
-            id: 'scheduling',
-            label: 'Agendar Consulta',
-            url: 'https://wa.me/5511999999999',
-            icon: 'CalendarClock',
-            featured: true,
-            description: 'Atendimento presencial e online'
+            id: 'agendar',
+            type: 'primary',
+            label: "Agendar Consulta",
+            sublabel: "Atendimento Vip via WhatsApp",
+            icon: "MessageCircle",
+            url: "https://wa.me/5511999999999"
         },
         {
-            id: 'whatsapp',
-            label: 'Falar no WhatsApp',
-            url: 'https://wa.me/5511999999999',
-            icon: 'MessageCircle',
-            featured: false
+            id: 'resultados',
+            type: 'square',
+            label: "Resultados",
+            sublabel: "Antes e Depois",
+            icon: "ImageIcon",
+            url: "#resultados"
         },
         {
-            id: 'instagram',
-            label: 'Instagram',
-            url: 'https://instagram.com/drfellipebarbosa',
-            icon: 'Instagram',
-            featured: false
+            id: 'clinica',
+            type: 'square',
+            label: "A Clínica",
+            sublabel: "Conheça o espaço",
+            icon: "MapPin",
+            url: "#clinica"
         },
         {
-            id: 'website',
-            label: 'Visite meu Site',
-            url: 'https://www.drfellipebarbosa.com.br',
-            icon: 'Globe',
-            featured: false
+            id: 'procedimentos',
+            type: 'card',
+            label: "Cirurgias Realizadas",
+            sublabel: "Procedimentos Faciais e Corporais",
+            icon: "Activity",
+            url: "#procedimentos",
+            image: "https://images.unsplash.com/photo-1504813184591-01572f98c85f?auto=format&fit=crop&q=80&w=1000"
+        },
+        {
+            id: 'prova_social',
+            type: 'review',
+            text: "O resultado superou todas as minhas expectativas. A atenção do Dr. Fellipe e da equipe foi impecável do início ao fim.",
+            author: "Mariana S.",
+            stars: 5
         }
     ],
     footer: {
-        text: "© 2024 Dr. Fellipe Barbosa. CRM 123456"
+        text: "© 2024 Dr. Fellipe Barbosa. Todos os direitos reservados."
     }
 };
