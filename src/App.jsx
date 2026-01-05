@@ -20,22 +20,26 @@ const StarRating = ({ count = 5 }) => {
     );
 };
 
-// --- LIGHTBOX COMPONENTS ---
+// --- MODAL COMPONENTS ---
 
-const Lightbox = ({ images, onClose }) => {
+const Modal = ({ item, onClose }) => {
     const [index, setIndex] = useState(0);
 
+    // --- LOGIC FOR GALLERY ---
+    const images = item.gallery || [];
+
     const next = (e) => {
-        e.stopPropagation();
+        e?.stopPropagation();
         setIndex((prev) => (prev + 1) % images.length);
     };
 
     const prev = (e) => {
-        e.stopPropagation();
+        e?.stopPropagation();
         setIndex((prev) => (prev - 1 + images.length) % images.length);
     };
 
     useEffect(() => {
+        if (!item.gallery) return;
         const handleKeyDown = (e) => {
             if (e.key === 'Escape') onClose();
             if (e.key === 'ArrowRight') setIndex((prev) => (prev + 1) % images.length);
@@ -43,39 +47,104 @@ const Lightbox = ({ images, onClose }) => {
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [images.length, onClose]);
+    }, [images.length, onClose, item.gallery]);
+
+    // --- RENDER CONTENT BASED ON TYPE ---
+
+    const renderContent = () => {
+        if (item.locationData) {
+            const { locationData } = item;
+            return (
+                <div className="w-full max-w-md bg-[#1E293B] rounded-3xl overflow-hidden border border-white/10 shadow-2xl animate-fade-in" onClick={(e) => e.stopPropagation()}>
+                    {/* Header do Modal */}
+                    <div className="flex justify-between items-center p-4 border-b border-white/5 bg-slate-900/50">
+                        <h3 className="text-white font-bold text-lg flex items-center gap-2">
+                            <Icons.MapPin size={20} className="text-[#D4AF37]" />
+                            Localização
+                        </h3>
+                        <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+                            <Icons.X size={24} />
+                        </button>
+                    </div>
+
+                    {/* Mapa */}
+                    <div className="w-full h-64 bg-slate-800">
+                        <iframe
+                            src={locationData.mapUrl}
+                            width="100%"
+                            height="100%"
+                            style={{ border: 0 }}
+                            allowFullScreen=""
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                            className="opacity-90 grayscale-[20%] hover:grayscale-0 transition-all duration-500"
+                        ></iframe>
+                    </div>
+
+                    {/* Info e Ações */}
+                    <div className="p-6 space-y-6">
+                        <div className="text-center">
+                            <p className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-1">Endereço</p>
+                            <p className="text-slate-200 text-sm leading-relaxed">{locationData.address}</p>
+                        </div>
+
+                        <div className="flex flex-col gap-3">
+                            <a href={locationData.wazeLink} target="_blank" rel="noopener noreferrer"
+                                className="w-full py-3 rounded-xl bg-[#D4AF37] text-slate-900 font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#b89628] transition-colors">
+                                <Icons.Navigation size={18} />
+                                Traçar Rota
+                            </a>
+                            <a href={locationData.instagram} target="_blank" rel="noopener noreferrer"
+                                className="w-full py-3 rounded-xl bg-white/5 text-white font-medium text-sm flex items-center justify-center gap-2 hover:bg-white/10 transition-colors border border-white/5">
+                                <Icons.Instagram size={18} />
+                                Ver no Instagram
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        if (item.gallery) {
+            return (
+                <div className="relative w-full max-w-lg max-h-[85vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                    <button onClick={onClose} className="absolute -top-12 right-0 text-white/50 hover:text-white transition-colors z-50 p-2">
+                        <Icons.X size={32} />
+                    </button>
+
+                    {images.length > 1 && (
+                        <button onClick={prev} className="absolute left-2 text-white/50 hover:text-[#D4AF37] transition-colors p-2 z-10 bg-black/20 rounded-full backdrop-blur-sm">
+                            <Icons.ChevronLeft size={32} />
+                        </button>
+                    )}
+
+                    <img
+                        src={images[index]}
+                        alt={`Resultado ${index + 1}`}
+                        className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl border border-white/10"
+                    />
+
+                    {images.length > 1 && (
+                        <button onClick={next} className="absolute right-2 text-white/50 hover:text-[#D4AF37] transition-colors p-2 z-10 bg-black/20 rounded-full backdrop-blur-sm">
+                            <Icons.ChevronRight size={32} />
+                        </button>
+                    )}
+
+                    <div className="absolute -bottom-8 left-0 right-0 flex justify-center gap-2">
+                        {images.map((_, i) => (
+                            <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all ${i === index ? 'bg-[#D4AF37] w-3' : 'bg-white/30'}`} />
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        return null;
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-fade-in" onClick={onClose}>
-            <button onClick={onClose} className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors z-50 p-2">
-                <Icons.X size={32} />
-            </button>
-
-            <div className="relative w-full max-w-lg max-h-[85vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
-                {images.length > 1 && (
-                    <button onClick={prev} className="absolute left-2 text-white/50 hover:text-[#D4AF37] transition-colors p-2 z-10 bg-black/20 rounded-full backdrop-blur-sm">
-                        <Icons.ChevronLeft size={32} />
-                    </button>
-                )}
-
-                <img
-                    src={images[index]}
-                    alt={`Resultado ${index + 1}`}
-                    className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl border border-white/10"
-                />
-
-                {images.length > 1 && (
-                    <button onClick={next} className="absolute right-2 text-white/50 hover:text-[#D4AF37] transition-colors p-2 z-10 bg-black/20 rounded-full backdrop-blur-sm">
-                        <Icons.ChevronRight size={32} />
-                    </button>
-                )}
-
-                <div className="absolute -bottom-8 left-0 right-0 flex justify-center gap-2">
-                    {images.map((_, i) => (
-                        <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all ${i === index ? 'bg-[#D4AF37] w-3' : 'bg-white/30'}`} />
-                    ))}
-                </div>
-            </div>
+            {renderContent()}
         </div>
     );
 };
@@ -99,8 +168,9 @@ const PrimaryCard = ({ item }) => (
 );
 
 const SquareCard = ({ item, onClick }) => {
-    const Component = item.gallery ? 'button' : 'a';
-    const props = item.gallery ? { onClick: () => onClick(item.gallery) } : { href: item.url, target: "_blank", rel: "noopener noreferrer" };
+    const isInteractive = item.gallery || item.locationData;
+    const Component = isInteractive ? 'button' : 'a';
+    const props = isInteractive ? { onClick: () => onClick(item) } : { href: item.url, target: "_blank", rel: "noopener noreferrer" };
 
     return (
         <Component {...props}
@@ -111,7 +181,7 @@ const SquareCard = ({ item, onClick }) => {
                 <IconHelper name={item.icon} size={24} />
             </div>
             <div>
-                <h3 className="font-semibold text-slate-100 text-sm sm:text-base">{item.label}</h3>
+                <h3 className="font-semibold text-slate-100 text-sm sm:text-base leading-tight">{item.label}</h3>
                 <p className="text-xs text-slate-400 mt-1 hidden sm:block">{item.sublabel}</p>
             </div>
         </Component>
@@ -233,27 +303,27 @@ const AboutSection = ({ data }) => {
 
 function App() {
     const [loaded, setLoaded] = useState(false);
-    const [lightboxImages, setLightboxImages] = useState(null);
+    const [selectedItem, setSelectedItem] = useState(null);
     const { theme, profile, items, testimonials, aboutMe, footer } = config;
 
     useEffect(() => {
         setLoaded(true);
     }, []);
 
-    const openLightbox = (images) => {
-        setLightboxImages(images);
+    const openModal = (item) => {
+        setSelectedItem(item);
         document.body.style.overflow = 'hidden';
     };
 
-    const closeLightbox = () => {
-        setLightboxImages(null);
+    const closeModal = () => {
+        setSelectedItem(null);
         document.body.style.overflow = 'auto';
     };
 
     const renderItem = (item) => {
         switch (item.type) {
             case 'primary': return <PrimaryCard key={item.id} item={item} />;
-            case 'square': return <SquareCard key={item.id} item={item} onClick={openLightbox} />;
+            case 'square': return <SquareCard key={item.id} item={item} onClick={openModal} />;
             case 'card': return <ContentCard key={item.id} item={item} />;
             default: return null;
         }
@@ -261,7 +331,7 @@ function App() {
 
     return (
         <>
-            {lightboxImages && <Lightbox images={lightboxImages} onClose={closeLightbox} />}
+            {selectedItem && <Modal item={selectedItem} onClose={closeModal} />}
 
             <div className="min-h-screen w-full flex justify-center bg-[#0F172A] text-slate-100 font-sans selection:bg-[#D4AF37] selection:text-slate-900">
 

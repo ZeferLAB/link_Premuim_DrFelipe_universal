@@ -56,7 +56,13 @@ export const config = {
             label: "A Clínica",
             sublabel: "Conheça o espaço",
             icon: "MapPin",
-            url: "#clinica"
+            url: "#clinica",
+            locationData: {
+                mapUrl: "https://maps.google.com/maps?q=Afiora+Cl%C3%ADnica+de+Cirurgia+Pl%C3%A1stica+e+Dermatologia&t=&z=15&ie=UTF8&iwloc=&output=embed",
+                address: "Alameda das Algarobas, 1006. Caminho das Árvores, Salvador - BA",
+                wazeLink: "https://maps.app.goo.gl/bYogZmNwT62GFSTL8",
+                instagram: "https://instagram.com/afiora.clinica"
+            }
         },
         {
             id: 'procedimentos',
