@@ -105,6 +105,61 @@ const Modal = ({ item, onClose }) => {
             );
         }
 
+        if (item.proceduresData) {
+            const { proceduresData } = item;
+
+            const openWhatsapp = (procedureName) => {
+                const message = encodeURIComponent(`Olá, gostaria de saber mais sobre ${procedureName}.`);
+                window.open(`https://wa.me/${proceduresData.whatsappNumber}?text=${message}`, '_blank');
+            };
+
+            return (
+                <div className="w-full max-w-md bg-[#1E293B] rounded-3xl overflow-hidden border border-white/10 shadow-2xl animate-fade-in flex flex-col max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
+                    {/* Header */}
+                    <div className="flex justify-between items-center p-4 border-b border-white/5 bg-slate-900/50 shrink-0">
+                        <h3 className="text-white font-bold text-lg flex items-center gap-2">
+                            <Icons.Activity size={20} className="text-[#D4AF37]" />
+                            Procedimentos
+                        </h3>
+                        <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+                            <Icons.X size={24} />
+                        </button>
+                    </div>
+
+                    {/* Lista com Scroll */}
+                    <div className="p-4 overflow-y-auto custom-scrollbar">
+                        {proceduresData.categories.map((category, idx) => (
+                            <div key={idx} className="mb-6 last:mb-0">
+                                <h4 className="text-[#D4AF37] text-xs font-bold uppercase tracking-wider mb-3 px-2">
+                                    {category.title}
+                                </h4>
+                                <div className="space-y-2">
+                                    {category.items.map((proc, pIdx) => (
+                                        <button
+                                            key={pIdx}
+                                            onClick={() => openWhatsapp(proc)}
+                                            className="w-full text-left p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors flex items-center justify-between group border border-white/5 hover:border-white/10"
+                                        >
+                                            <span className="text-slate-200 font-medium text-sm group-hover:text-white transition-colors">
+                                                {proc}
+                                            </span>
+                                            <Icons.ChevronRight size={16} className="text-slate-500 group-hover:text-[#D4AF37] transition-colors" />
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="p-4 border-t border-white/5 bg-slate-900/30 text-center shrink-0">
+                        <p className="text-slate-500 text-xs">
+                            Clique para agendar via WhatsApp
+                        </p>
+                    </div>
+                </div>
+            );
+        }
+
         if (item.gallery) {
             return (
                 <div className="relative w-full max-w-lg max-h-[85vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
@@ -168,7 +223,7 @@ const PrimaryCard = ({ item }) => (
 );
 
 const SquareCard = ({ item, onClick }) => {
-    const isInteractive = item.gallery || item.locationData;
+    const isInteractive = item.gallery || item.locationData || item.proceduresData;
     const Component = isInteractive ? 'button' : 'a';
     const props = isInteractive ? { onClick: () => onClick(item) } : { href: item.url, target: "_blank", rel: "noopener noreferrer" };
 
@@ -188,21 +243,27 @@ const SquareCard = ({ item, onClick }) => {
     );
 };
 
-const ContentCard = ({ item }) => (
-    <a href={item.url} target="_blank" rel="noopener noreferrer"
-        className="col-span-2 relative h-32 overflow-hidden rounded-3xl group cursor-pointer border border-slate-700/50">
-        <img src={item.image} alt={item.label} className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 group-hover:scale-105 transition-all duration-700" />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-transparent" />
+const ContentCard = ({ item, onClick }) => {
+    const isInteractive = item.gallery || item.locationData || item.proceduresData;
+    const Component = isInteractive ? 'button' : 'a';
+    const props = isInteractive ? { onClick: () => onClick(item) } : { href: item.url, target: "_blank", rel: "noopener noreferrer" };
 
-        <div className="absolute inset-0 p-6 flex flex-col justify-center">
-            <div className="flex items-center gap-2 text-[#D4AF37] mb-1">
-                <IconHelper name={item.icon} size={16} />
-                <span className="text-xs font-bold uppercase tracking-wider">{item.sublabel}</span>
+    return (
+        <Component {...props}
+            className="col-span-2 relative h-32 overflow-hidden rounded-3xl group cursor-pointer border border-slate-700/50 w-full text-left bg-slate-900">
+            <img src={item.image} alt={item.label} className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 group-hover:scale-105 transition-all duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-transparent" />
+
+            <div className="absolute inset-0 p-6 flex flex-col justify-center">
+                <div className="flex items-center gap-2 text-[#D4AF37] mb-1">
+                    <IconHelper name={item.icon} size={16} />
+                    <span className="text-xs font-bold uppercase tracking-wider">{item.sublabel}</span>
+                </div>
+                <h3 className="text-xl font-bold text-white group-hover:translate-x-1 transition-transform">{item.label}</h3>
             </div>
-            <h3 className="text-xl font-bold text-white group-hover:translate-x-1 transition-transform">{item.label}</h3>
-        </div>
-    </a>
-);
+        </Component>
+    );
+};
 
 // --- NEW SECTIONS ---
 
@@ -324,7 +385,7 @@ function App() {
         switch (item.type) {
             case 'primary': return <PrimaryCard key={item.id} item={item} />;
             case 'square': return <SquareCard key={item.id} item={item} onClick={openModal} />;
-            case 'card': return <ContentCard key={item.id} item={item} />;
+            case 'card': return <ContentCard key={item.id} item={item} onClick={openModal} />;
             default: return null;
         }
     };

@@ -71,7 +71,24 @@ export const config = {
             sublabel: "Procedimentos Faciais e Corporais",
             icon: "Activity",
             url: "#procedimentos",
-            image: "https://images.unsplash.com/photo-1504813184591-01572f98c85f?auto=format&fit=crop&q=80&w=1000"
+            image: "https://images.unsplash.com/photo-1504813184591-01572f98c85f?auto=format&fit=crop&q=80&w=1000",
+            proceduresData: {
+                whatsappNumber: "5571999999999",
+                categories: [
+                    {
+                        title: "Face",
+                        items: ["Rinoplastia", "Blefaroplastia", "Facelift", "Otoplastia", "Lipo de Papada"]
+                    },
+                    {
+                        title: "Mama",
+                        items: ["Prótese de Silicone", "Mastopexia", "Mamoplastia Redutora"]
+                    },
+                    {
+                        title: "Contorno Corporal",
+                        items: ["Lipoaspiração HD", "Abdominoplastia", "Lipoabdominoplastia", "Gluteoplastia"]
+                    }
+                ]
+            }
         }
     ],
     testimonials: [
